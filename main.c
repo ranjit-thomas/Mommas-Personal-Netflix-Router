@@ -13,8 +13,6 @@
 
 #define MAXREQUESTSIZE 2048
 
-storage_unit *process_get_request(char http_request [], char get_request_line [], char hostname [], int portno);
-
 int read_from_client (int filedes)
 {
     char http_request[MAXREQUESTSIZE], http_request_copy[MAXREQUESTSIZE];
@@ -44,8 +42,8 @@ int read_from_client (int filedes)
         // copy the original request for future use
         strcpy(http_request_copy, http_request);
 
-        printf("%d bytes were read\n", total_nbytes);
-        fflush(stdout);
+        /*printf("%d bytes were read\n", total_nbytes);
+        fflush(stdout);*/
 
         // parse the http request... only concerned with request-line and hostName
 
@@ -55,15 +53,15 @@ int read_from_client (int filedes)
 
         /* second step: get first line as the first line of HTTP request header
          is always the request-line */
-        get_request_line = strtok(http_request, "\n");
+        get_request_line = strtok(http_request, "\r\n");
 
         // third step: iterate over each line and find the field that has hostname
-        line_from_request = strtok(NULL, "\n");
+        line_from_request = strtok(NULL, "\r\n");
 
         while (line_from_request != NULL)
         {
             if (strstr(line_from_request, "Host: ")) strcpy(hostname_line, line_from_request + 6);
-            line_from_request = strtok(NULL, "\n");
+            line_from_request = strtok(NULL, "\r\n");
         }
 
         // fourth step: get portnumber if specified
@@ -81,9 +79,9 @@ int read_from_client (int filedes)
             portno_int = 80;
         }
 
-        printf("the get_request_line was %s \nthe hostname was %s\nthe portno is %d\n", 
+        /*printf("the get_request_line was %s \nthe hostname was %s\nthe portno is %d\n", 
             get_request_line, hostname, portno_int);
-        fflush(stdout);
+        fflush(stdout);*/
 
         if (strstr(get_request_line, "GET"))
         {

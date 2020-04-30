@@ -63,7 +63,7 @@ int main(int argc, char **argv)
     if (connect(sockfd, &serveraddr, sizeof(serveraddr)) < 0) error("ERROR connecting");
 
     // hard-coded easy getRequest example
-    strcpy(getRequest, "GET http://www.cs.tufts.edu/comp/112/index.html HTTP/1.1\nHost: www.cs.tufts.edu\n\n");
+    strcpy(getRequest, "GET http://www.cs.tufts.edu/comp/112/index.html HTTP/1.1\r\nHost: www.cs.tufts.edu\r\n\r\n");
 
     /* send the message line to the server */
     n = write(sockfd, getRequest, strlen(getRequest));
