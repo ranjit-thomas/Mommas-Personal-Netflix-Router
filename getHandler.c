@@ -8,6 +8,7 @@
 #include <netdb.h> 
 
 #include "storageUnit.h"
+#include "serverData.h"
 
 #define MAXREQUESTSIZE 2048
 #define MAXRESPONSESIZE 999999
@@ -23,20 +24,21 @@ void error(const char *msg)
     exit(0);
 }
 
-storage_unit* process_get_request(char http_request [], char get_request_line [], char hostname [], int portno) 
+server_data* process_get_request(char http_request [], char get_request_line [], char hostname [], int portno) 
 {
 	int sockfd, total_nbytes, last_nbytes_received;
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
 	char http_response [MAXRESPONSESIZE];
-	storage_unit* storage_unit_to_return;
+	storage_unit* data_found;
+	server_data* data_to_return;
 
-	storage_unit_to_return = isInCache();
+	data_found = isInCache();
 
 	// if we found the content in a cache, use it
-	if (storage_unit_to_return != NULL)
+	if (data_found != NULL)
 	{
-
+		data_to_return = NULL;
 	}
 
 	// else, query the server directly
@@ -89,9 +91,12 @@ storage_unit* process_get_request(char http_request [], char get_request_line []
         printf("%d bytes were read\n", total_nbytes);
         fflush(stdout);
 
-	    printf("Message recieved was %s\n", http_response);
-	    fflush(stdout);
+	    data_to_return = malloc(sizeof(server_data));
+	    strcpy(data_to_return->data, http_response);
+	    data_to_return->total_bytes = total_nbytes;
+
+	    close(sockfd);
 	}
 
-	return storage_unit_to_return;
+	return data_to_return;
 }

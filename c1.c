@@ -10,8 +10,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h> 
+#include <unistd.h>
 
-#define MAXMSGSIZE 1024
+#define MAXREQUESTSIZE 2048
+#define MAXRESPONSESIZE 999999
 
 /* 
 * error - wrapper for perror
@@ -24,11 +26,17 @@ void error(char *msg)
 
 int main(int argc, char **argv) 
 {
-    int sockfd, portno, n;
+    int sockfd, portno, n, total_nbytes, 
+        last_nbytes_received, bytes_left_to_read,
+        length_of_header, already_counted;
     struct sockaddr_in serveraddr;
     struct hostent *server;
-    char *hostname;
-    char getRequest[MAXMSGSIZE];
+    char *hostname, *line_from_response;
+    char get_request[MAXREQUESTSIZE];
+    char get_response[MAXRESPONSESIZE];
+    char get_response_copy[MAXRESPONSESIZE];
+    char response_header[MAXREQUESTSIZE];
+    char content_length_line[500];
 
     /* check command line arguments */
     if (argc != 3) 
@@ -63,21 +71,61 @@ int main(int argc, char **argv)
     if (connect(sockfd, &serveraddr, sizeof(serveraddr)) < 0) error("ERROR connecting");
 
     // hard-coded easy getRequest example
-    strcpy(getRequest, "GET http://www.cs.tufts.edu/comp/112/index.html HTTP/1.1\r\nHost: www.cs.tufts.edu\r\n\r\n");
+    strcpy(get_request, "GET http://www.cs.tufts.edu/comp/112/index.html HTTP/1.1\r\nHost: www.cs.tufts.edu\r\n\r\n");
 
     /* send the message line to the server */
-    n = write(sockfd, getRequest, strlen(getRequest));
-
-    printf("wrote %d characters\n", n);
+    n = write(sockfd, get_request, strlen(get_request));
     if (n < 0) error("ERROR writing to socket");
 
-    // uncomment this shit when I"m ready to start reading shit back from server
+    sleep(3);
 
     /* print the server's reply */
-    /*bzero(buf, BUFSIZE);
-    n = read(sockfd, buf, BUFSIZE);
-    if (n < 0) error("ERROR reading from socket");
-    printf("Echo from server: %s", buf);*/
+    bzero(get_response, MAXRESPONSESIZE);
+
+    total_nbytes = 0;
+    last_nbytes_received = 1;
+
+    // read the header
+    while ((last_nbytes_received != -1) && (strstr(get_response, "\r\n\r\n") == NULL))
+    {
+        last_nbytes_received = read(sockfd, get_response + total_nbytes, MAXRESPONSESIZE);
+        total_nbytes += last_nbytes_received;
+    }
+
+    if (last_nbytes_received < 0) perror ("read");
+
+    // figure out how many bytes after the header have been read
+    length_of_header = strstr(get_response, "\r\n\r\n") - get_response + 4;
+    already_counted = strlen(get_response) - length_of_header;
+
+    strcpy(get_response_copy, get_response);
+
+    // iterate over header and fine the length_line field
+    line_from_response = strtok(get_response_copy, "\r\n");
+    strcpy(content_length_line, "");
+
+    while (line_from_response != NULL)
+    {
+        if (strstr(line_from_response, "Content-Length: ")) strcpy(content_length_line, line_from_response + 16);
+        line_from_response = strtok(NULL, "\r\n");
+    }
+
+    // read until there's nothing left to read
+    bytes_left_to_read = atoi(content_length_line) - already_counted;
+    last_nbytes_received = 1;
+
+    while ((last_nbytes_received != -1) && bytes_left_to_read > 0) 
+    {
+        last_nbytes_received = read(sockfd, get_response + total_nbytes, bytes_left_to_read);
+        total_nbytes += last_nbytes_received;
+        bytes_left_to_read -= last_nbytes_received;
+    }
+
+    // need to trigger an error if calling read caused an error on last call
+    if (last_nbytes_received < 0) perror ("read");
+
+    printf("%s", get_response);
     close(sockfd);
+
     return 0;
 }

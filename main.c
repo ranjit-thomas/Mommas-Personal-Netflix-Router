@@ -10,8 +10,31 @@
 #include <string.h>
 
 #include "storageUnit.h"
+#include "serverData.h"
 
 #define MAXREQUESTSIZE 2048
+
+typedef struct connect_socket
+{
+    int client;
+    int server;
+    struct connect_socket *next;
+} connect_socket;
+
+server_data* process_get_request(char http_request [], char get_request_line [], char hostname [], int portno);
+
+void add_to_connected_sockets(connect_socket** head_of_list, int client_socket, int server_socket)
+{
+    connect_socket* current_socket;
+
+    current_socket = *head_of_list;
+    while (current_socket != NULL) current_socket = current_socket->next;
+
+    current_socket = malloc(sizeof(connect_socket));
+    current_socket->client = client_socket;
+    current_socket->server = server_socket;
+    current_socket->next = NULL;
+} 
 
 int read_from_client (int filedes)
 {
@@ -23,27 +46,27 @@ int read_from_client (int filedes)
     // read until there's nothing left to read
     total_nbytes = 0;
     last_nbytes_received = 1;
-    while (last_nbytes_received > 0) 
+
+    while (last_nbytes_received != -1 && strstr(http_request, "\r\n\r\n") == NULL)
     {
         last_nbytes_received = read(filedes, http_request + total_nbytes, MAXREQUESTSIZE);
         total_nbytes += last_nbytes_received;
     }
 
-    // need to trigger an error if calling read caused an error on last call
     if (last_nbytes_received < 0)
     {
         perror ("read");
         exit (EXIT_FAILURE);
     }
 
+    /*printf("%d bytes were read\n", total_nbytes);
+    fflush(stdout);*/
+
     // n > 0 ==> data was read
     if (total_nbytes > 0)
     {
         // copy the original request for future use
         strcpy(http_request_copy, http_request);
-
-        /*printf("%d bytes were read\n", total_nbytes);
-        fflush(stdout);*/
 
         // parse the http request... only concerned with request-line and hostName
 
@@ -85,7 +108,32 @@ int read_from_client (int filedes)
 
         if (strstr(get_request_line, "GET"))
         {
-            process_get_request(http_request_copy, get_request_line, hostname, portno_int);
+            server_data* data_to_return;
+            int bytes_to_write;
+
+            data_to_return = process_get_request(http_request_copy, get_request_line, hostname, portno_int);
+            bytes_to_write = data_to_return->total_bytes;
+
+            // write until there's nothing left to write
+            total_nbytes = 0;
+            last_nbytes_received = 1;
+
+            while (last_nbytes_received != -1 && bytes_to_write > 0) 
+            {
+                last_nbytes_received = write(filedes, data_to_return->data + total_nbytes, bytes_to_write);
+                total_nbytes += last_nbytes_received;
+                bytes_to_write -= last_nbytes_received;
+            }
+
+            // need to trigger an error if calling write caused an error on last call
+            if (last_nbytes_received < 0)
+            {
+                perror ("read");
+                exit (EXIT_FAILURE);
+            }
+
+            // free memory for storage_unit
+            free(data_to_return);
         }
 
         else if (strstr(get_request_line, "CONNECT"))
@@ -136,8 +184,9 @@ int main (int argc, char **argv)
     int sock;
     fd_set active_fd_set, read_fd_set;
     int i;
-    struct sockaddr_in clientname;
+    struct sockaddr_in clientname, servername;
     size_t size;
+    connect_socket* connected_sockets;
 
     // check that an argument for port number was supplied
     if (argc != 2) 
@@ -153,6 +202,9 @@ int main (int argc, char **argv)
         perror ("listen");
         exit (EXIT_FAILURE);
     }
+
+    // initialize an empty linkedList of connected sockets
+    connected_sockets = NULL;
 
     /* Initialize the set of active sockets. */
     // all sockets are being set off since there should be no active sockets at begining...
@@ -218,6 +270,36 @@ int main (int argc, char **argv)
                     {
                         close (i);
                         FD_CLR (i, &active_fd_set);
+                    }
+
+                    /* if the function returned something nonNULL, we assume that I "CONNECT" request
+                       was recieved */
+                    else
+                    {
+                        int new_connect;
+                        size = sizeof(servername);
+
+                        // create a new socket and return the int that is the file descriptor
+                        new_connect = accept (sock,
+                                        (struct sockaddr *) &servername,
+                                        &size);
+
+                        if (new_connect < 0)
+                        {
+                            perror ("accept");
+                            exit (EXIT_FAILURE);
+                        }
+
+                        fprintf (stderr,
+                                 "Server: connect from host %s, port %hd.\n",
+                                 inet_ntoa (servername.sin_addr),
+                                 ntohs (servername.sin_port));
+
+                        // set the file descriptor to "on" in the 
+                        FD_SET (new_connect, &active_fd_set);
+
+                        // add both the client and server socket to the linkedList that has all Connect sockets
+                        add_to_connected_sockets(&connected_sockets, i, new_connect);
                     }
                 }
             }
