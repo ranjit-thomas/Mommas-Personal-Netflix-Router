@@ -11,6 +11,7 @@
 
 #include "storageUnit.h"
 #include "serverData.h"
+#include "requestStruct.h"
 
 #define MAXREQUESTSIZE 2048
 
@@ -25,18 +26,31 @@ server_data* process_get_request(char http_request [], char get_request_line [],
 
 void add_to_connected_sockets(connect_socket** head_of_list, int client_socket, int server_socket)
 {
+    connect_socket** current_socket;
+
+    printf("Adding client socked %d and server socket %d\n", client_socket, server_socket);
+    current_socket = head_of_list;
+    while (*current_socket != NULL) *current_socket = (*current_socket)->next;
+
+    *current_socket = malloc(sizeof(connect_socket));
+    (*current_socket)->client = client_socket;
+    (*current_socket)->server = server_socket;
+    (*current_socket)->next = NULL;
+}
+
+connect_socket* find_connect_socket(connect_socket* head_of_list, int node_socket)
+{
     connect_socket* current_socket;
 
-    current_socket = *head_of_list;
-    while (current_socket != NULL) current_socket = current_socket->next;
+    printf("Looking for nocde socket %d\n", node_socket);
+    current_socket = head_of_list;
+    while (current_socket != NULL && current_socket->client != node_socket && current_socket->server != node_socket) current_socket = current_socket->next;
 
-    current_socket = malloc(sizeof(connect_socket));
-    current_socket->client = client_socket;
-    current_socket->server = server_socket;
-    current_socket->next = NULL;
-} 
+    if (current_socket == NULL) printf("Couldn't find anything\n");
+    return current_socket;
+}
 
-int read_from_client (int filedes)
+request_struct* read_from_client (int filedes)
 {
     char http_request[MAXREQUESTSIZE], http_request_copy[MAXREQUESTSIZE];
     int total_nbytes, last_nbytes_received, portno_int;
@@ -108,7 +122,7 @@ int read_from_client (int filedes)
 
         if (strstr(get_request_line, "GET"))
         {
-            server_data* data_to_return;
+            server_data *data_to_return;
             int bytes_to_write;
 
             data_to_return = process_get_request(http_request_copy, get_request_line, hostname, portno_int);
@@ -134,11 +148,18 @@ int read_from_client (int filedes)
 
             // free memory for storage_unit
             free(data_to_return);
+            return NULL;
         }
 
         else if (strstr(get_request_line, "CONNECT"))
         {
+            request_struct *server_info;
 
+            server_info = malloc(sizeof(request_struct));
+            strcpy(server_info->hostname, hostname);
+            server_info->portno = portno_int;
+
+            return server_info;
         }
 
         /* there is nothing in the "else" condition because we're only
@@ -147,7 +168,7 @@ int read_from_client (int filedes)
 
 
         // MIGHT NEED TO CHANGE LATER: return 1 since we're done with this connection
-        return 1;
+        return NULL;
     }
 }
 
@@ -187,6 +208,7 @@ int main (int argc, char **argv)
     struct sockaddr_in clientname, servername;
     size_t size;
     connect_socket* connected_sockets;
+    connect_socket* set_connect_socket;
 
     // check that an argument for port number was supplied
     if (argc != 2) 
@@ -218,6 +240,8 @@ int main (int argc, char **argv)
         // reset the fd_set to be off for all sockets (except the one proxy recieves on)
         read_fd_set = active_fd_set;
 
+        printf("before select call\n");
+        fflush(stdout);
         /* Block until input arrives on one or more active sockets. */
         if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0)
         {
@@ -225,12 +249,18 @@ int main (int argc, char **argv)
           exit (EXIT_FAILURE);
         }
 
+        printf("after select call\n");
+        fflush(stdout);
+
         // iterate over all sockets in the "read_fd_set" list
         for (i = 0; i < FD_SETSIZE; ++i)
         {
             // if input arrived on a given socket, proceed
             if (FD_ISSET (i, &read_fd_set))
             {
+                // figure out if this is from a node that is currently CONNECT-ed to another node
+                set_connect_socket = find_connect_socket(connected_sockets, i);
+
                 /* if a connection request from a new client came to our "main" socket,
                    set that socket */ 
                 if (i == sock)
@@ -260,13 +290,27 @@ int main (int argc, char **argv)
 
                 }
 
+                // condition where the socket is currently CONNECT-ed to another
+                else if (set_connect_socket != NULL)
+                {
+                    printf("yayyyyy\n");
+                    fflush(stdout);
+                }
+
                 /* if a file descriptor that doesnt represent "main" socket is set,
                    read whatever data was recieved */
                 else
                 {
+                    printf("should only see this once i think\n");
+                    fflush(stdout);
+
+                    request_struct *server_info;
+
+                    server_info = read_from_client(i);
+
                     /* call "read_from_client" function, and clear the file_descriptor's
                        value in the set of active sockets if we recieve 0 (i.e. done reading) */ 
-                    if (read_from_client (i))
+                    if (server_info == NULL)
                     {
                         close (i);
                         FD_CLR (i, &active_fd_set);
@@ -277,29 +321,46 @@ int main (int argc, char **argv)
                     else
                     {
                         int new_connect;
-                        size = sizeof(servername);
+                        struct hostent *server;
 
-                        // create a new socket and return the int that is the file descriptor
-                        new_connect = accept (sock,
-                                        (struct sockaddr *) &servername,
-                                        &size);
-
-                        if (new_connect < 0)
+                        new_connect = socket(AF_INET, SOCK_STREAM, 0);
+                        if (new_connect < 0) 
                         {
-                            perror ("accept");
+                            perror("ERROR opening socket");
                             exit (EXIT_FAILURE);
                         }
 
-                        fprintf (stderr,
-                                 "Server: connect from host %s, port %hd.\n",
-                                 inet_ntoa (servername.sin_addr),
-                                 ntohs (servername.sin_port));
+                        server = gethostbyname(server_info->hostname);
+                        if (server == NULL) 
+                        {
+                            fprintf(stderr,"ERROR, no such host\n");
+                            exit(0);
+                        }
+
+                        /* set up the server_addr so we can set up a "client-side" socket that
+                           that can connect to the server we need to query */
+                        bzero((char *) &servername, sizeof(servername));
+                        servername.sin_family = AF_INET;
+                        bcopy((char *)server->h_addr, 
+                             (char *)&servername.sin_addr.s_addr,
+                             server->h_length);
+                        servername.sin_port = htons(server_info->portno);
+
+                        if (connect(new_connect,(struct sockaddr *) &servername,sizeof(servername)) < 0) 
+                        {
+                            fprintf(stderr,"ERROR, no such host\n");
+                            exit(0);
+                        }
 
                         // set the file descriptor to "on" in the 
                         FD_SET (new_connect, &active_fd_set);
 
                         // add both the client and server socket to the linkedList that has all Connect sockets
                         add_to_connected_sockets(&connected_sockets, i, new_connect);
+                        if (connected_sockets == NULL) printf("we never added anything!!!\n");
+
+                        printf("Should have added to the linked list here\n");
+                        fflush(stdout);
                     }
                 }
             }
