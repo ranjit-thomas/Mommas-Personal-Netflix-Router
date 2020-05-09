@@ -2,6 +2,7 @@
 #define PEERDICTIONARY_H
 
 #include "storageUnit.h"
+#include "requestStruct.h"
 
 typedef struct peer_dictionary
 {
@@ -9,15 +10,14 @@ typedef struct peer_dictionary
 	int current_size;
 } peer_dictionary;
 
-typedef struct request_struct
-{
-	char* get_request;
-	char* hostname;
-	int portno;
-} request_struct;
+// uncomment this line to test this function
+// int compare_request_struct(request_struct* request_1, request_struct* request_2);
 
 // constructor
 peer_dictionary* new_hash_table();
+
+// destructor
+void free_hash_table(peer_dictionary* dictionary);
 
 // insert function
 void table_insert(peer_dictionary* dictionary, request_struct* request_data, char* data_from_server);

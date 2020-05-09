@@ -3,7 +3,7 @@
 
 #include "requestStruct.h"
 
-#define MAXRESPONSESIZE 999999
+#define MAXRESPONSESIZE 9999
 
 typedef struct storage_unit
 {

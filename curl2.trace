@@ -1,0 +1,376 @@
+== Info:   Trying 142.250.64.100...
+== Info: TCP_NODELAY set
+== Info: Connected to www.google.com (142.250.64.100) port 443 (#0)
+== Info: ALPN, offering h2
+== Info: ALPN, offering http/1.1
+== Info: successfully set certificate verify locations:
+== Info:   CAfile: /etc/ssl/cert.pem
+  CApath: none
+== Info: TLSv1.2 (OUT), TLS handshake, Client hello (1):
+=> Send SSL data, 228 bytes (0xe4)
+0000: ........&|ir|YnK.......;..io9....m.f=...\.0.,.(.$.......k.9.....
+0040: ............=.5...../.+.'.#.......g.3...E...<./...A.............
+0080: ........[.........www.google.com................................
+00c0: .........................h2.http/1.1
+== Info: TLSv1.2 (IN), TLS handshake, Server hello (2):
+<= Recv SSL data, 96 bytes (0x60)
+0000: ...\..^...A........D...rb..RzSDOWNGRD. .u.q....a..-^S.,..V.v...w
+0040: ...@..4.......................h2
+== Info: TLSv1.2 (IN), TLS handshake, Certificate (11):
+<= Recv SSL data, 2335 bytes (0x91f)
+0000: ..........0...0............5.m..&.....c..0...*.H........0B1.0...
+0040: U....US1.0...U....Google Trust Services1.0...U....GTS CA 1O10...
+0080: 200415202531Z..200708202531Z0h1.0...U....US1.0...U....California
+00c0: 1.0...U....Mountain View1.0...U....Google LLC1.0...U....www.goog
+0100: le.com0Y0...*.H.=....*.H.=....B..oS...W......?.g.?..<...!...jpN.
+0140: .V:u.q...I.....^#..R.+....{+W..{....U0..Q0...U...........0...U.%
+0180: ..0...+.......0...U.......0.0...U........B-L.0E.P..<r)%...0...U
+01c0: .#..0......n.....`......}..+0d..+........X0V0'..+.....0...http:/
+0200: /ocsp.pki.goog/gts1o10+..+.....0...http://pki.goog/gsr2/GTS1O1.c
+0240: rt0...U....0...www.google.com0!..U. ..0.0...g.....0...+.....y...
+0280: 0/..U...(0&0$.". ..http://crl.pki.goog/GTS1O1.crl0.....+.....y..
+02c0: ..........w......... N.f.+..% gk..p..IS-...^...q........H0F.!..
+0300: ..g.3.9|..w..n...R...+..~.......!...j..j.n..)L.`AZ..Y..B.xX.P.9.
+0340: .o.v.^.s..V...6H}.I.2z.........u..qEX...q..!.....G0E. I{W($...Q
+0380: ....f....y.........(?..!....R.7.....RR-..W.c GZ....`..H~.0...*.
+03c0: H.............s..2...3..~..$%.F[.v........d t#.1,Q.q.c..D.uN....
+0400: )3.C...s[}!.1.uQ>0..3...g.WWE~b.b0.yN/.p...c....o...:u....\.p...
+0440: O....6x~.. .I.`S",.b....3>.<xf.....d.pTNP........b.....q..I..+..
+0480: E.-e......%_6....u.:.lS,.......iaT..,#.o).c.g1..bF..r..L..@M..A.
+04c0: ...........o....N0..J0..2................%iP.0...*.H........0L1 
+0500: 0...U....GlobalSign Root CA - R21.0...U....GlobalSign1.0...U....
+0540: GlobalSign0...170615000042Z..211215000042Z0B1.0...U....US1.0...U
+0580: ....Google Trust Services1.0...U....GTS CA 1O10.."0...*.H.......
+05c0: ......0...........E......@.~..i!...<.Lu..1..=.<).P...o....*...K.
+0600: .=.X.$.0..twU..K.M.....Q...."..4k..I....9. ..-...ae.#. .#...$./
+0640: .Dj[M.Pf...Bc.....ca..j3.b..H..|.g.u..i..mxi......1.;$..3t.#..k.
+0680: ...........Y`8.;......S........<a.........dG @.N......Y..I%#..p4
+06c0: ,..c|..=...m$..........30../0...U...........0...U.%..0...+......
+0700: ...+.......0...U.......0.......0...U.........n.....`......}..+0.
+0740: ..U.#..0......Wg...j..Y..-.....05..+........)0'0%..+.....0...htt
+0780: p://ocsp.pki.goog/gsr202..U...+0)0'.%.#.!http://crl.pki.goog/gsr
+07c0: 2/gsr2.crl0?..U. .80604..g.....0*0(..+.........https://pki.goog/
+0800: repository/0...*.H...............>6y....F7}^T.5..N.....4i&Rf.=..
+0840: I.b......Oh.Lt+.g.......ML e.......l;.o.#.k:l.`.h.q..-X4...T..Y.
+0880: {^.!.................'......xka..5+.V.O.....<.K....<.....>..BX..
+08c0: .!.@...f....[.....&.2..ng .[..........;...l..\.R.Q*q..z....+..*,
+0900: ...!.c..RIP.......P./....F.....
+== Info: TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+<= Recv SSL data, 115 bytes (0x73)
+0000: ...o... ...K......Q,C...{.....V%..TZ..2...G0E.!...F.U.pb....;}
+0040: ...hs&#.%/....g... kmM.(.-.<J...t7.B.NDL...K..$=E.
+== Info: TLSv1.2 (IN), TLS handshake, Server finished (14):
+<= Recv SSL data, 4 bytes (0x4)
+0000: ....
+== Info: TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+=> Send SSL data, 37 bytes (0x25)
+0000: ...! .M..Fx..C.dN...%Et..2.g.|D.....
+== Info: TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+=> Send SSL data, 1 bytes (0x1)
+0000: .
+== Info: TLSv1.2 (OUT), TLS handshake, Finished (20):
+=> Send SSL data, 16 bytes (0x10)
+0000: ....i.q.........
+== Info: TLSv1.2 (IN), TLS change cipher, Change cipher spec (1):
+<= Recv SSL data, 1 bytes (0x1)
+0000: .
+== Info: TLSv1.2 (IN), TLS handshake, Finished (20):
+<= Recv SSL data, 16 bytes (0x10)
+0000: ......0 .d.J@|..
+== Info: SSL connection using TLSv1.2 / ECDHE-ECDSA-CHACHA20-POLY1305
+== Info: ALPN, server accepted to use h2
+== Info: Server certificate:
+== Info:  subject: C=US; ST=California; L=Mountain View; O=Google LLC; CN=www.google.com
+== Info:  start date: Apr 15 20:25:31 2020 GMT
+== Info:  expire date: Jul  8 20:25:31 2020 GMT
+== Info:  subjectAltName: host "www.google.com" matched cert's "www.google.com"
+== Info:  issuer: C=US; O=Google Trust Services; CN=GTS CA 1O1
+== Info:  SSL certificate verify ok.
+== Info: Using HTTP2, server supports multi-use
+== Info: Connection state changed (HTTP/2 confirmed)
+== Info: Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+== Info: Using Stream ID: 1 (easy handle 0x7fb41f805400)
+=> Send header, 76 bytes (0x4c)
+0000: GET / HTTP/2
+000e: Host: www.google.com
+0024: User-Agent: curl/7.64.1
+003d: Accept: */*
+004a: 
+== Info: Connection state changed (MAX_CONCURRENT_STREAMS == 100)!
+<= Recv header, 13 bytes (0xd)
+0000: HTTP/2 200 
+<= Recv header, 37 bytes (0x25)
+0000: date: Fri, 08 May 2020 16:45:06 GMT
+<= Recv header, 13 bytes (0xd)
+0000: expires: -1
+<= Recv header, 35 bytes (0x23)
+0000: cache-control: private, max-age=0
+<= Recv header, 45 bytes (0x2d)
+0000: content-type: text/html; charset=ISO-8859-1
+<= Recv header, 69 bytes (0x45)
+0000: p3p: CP="This is not a P3P policy! See g.co/p3phelp for more inf
+0040: o."
+<= Recv header, 13 bytes (0xd)
+0000: server: gws
+<= Recv header, 21 bytes (0x15)
+0000: x-xss-protection: 0
+<= Recv header, 29 bytes (0x1d)
+0000: x-frame-options: SAMEORIGIN
+<= Recv header, 109 bytes (0x6d)
+0000: set-cookie: 1P_JAR=2020-05-08-16; expires=Sun, 07-Jun-2020 16:45
+0040: :06 GMT; path=/; domain=.google.com; Secure
+<= Recv header, 270 bytes (0x10e)
+0000: set-cookie: NID=204=DHYdQobJq8iVQFERSekN8w5SrkPtbztZ93XDw57HTOcF
+0040: p8zY7OMIUPYsL-_Uv3--T8UDIeHbUGVwYZkyxVpfFp0UJW39C43od11zEXupAlIQ
+0080: wKKUTMdZUi23OmWx5ocLIQnAYYQOWnsKtryV0OBt_elXqaySU_Mvasjuqi4432Y;
+00c0:  expires=Sat, 07-Nov-2020 16:45:06 GMT; path=/; domain=.google.c
+0100: om; HttpOnly
+<= Recv header, 230 bytes (0xe6)
+0000: alt-svc: h3-27=":443"; ma=2592000,h3-25=":443"; ma=2592000,h3-Q0
+0040: 50=":443"; ma=2592000,h3-Q049=":443"; ma=2592000,h3-Q048=":443";
+0080:  ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=259200
+00c0: 0,quic=":443"; ma=2592000; v="46,43"
+<= Recv header, 21 bytes (0x15)
+0000: accept-ranges: none
+<= Recv header, 23 bytes (0x17)
+0000: vary: Accept-Encoding
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv data, 1388 bytes (0x56c)
+0000: <!doctype html><html itemscope="" itemtype="http://schema.org/We
+0040: bPage" lang="en"><head><meta content="Search the world's informa
+0080: tion, including webpages, images, videos and more. Google has ma
+00c0: ny special features to help you find exactly what you're looking
+0100:  for." name="description"><meta content="noodp" name="robots"><m
+0140: eta content="text/html; charset=UTF-8" http-equiv="Content-Type"
+0180: ><meta content="/logos/doodles/2020/stay-and-play-at-home-with-p
+01c0: opular-past-google-doodles-pac-man-2010-6753651837108775.2-law.g
+0200: if" itemprop="image"><meta content="Stay and Play at Home with P
+0240: opular Past Google Doodles: PAC-MAN (2010)" property="twitter:ti
+0280: tle"><meta content="Stay and Play at Home with Popular Past Goog
+02c0: le Doodles! #GoogleDoodle" property="twitter:description"><meta 
+0300: content="Stay and Play at Home with Popular Past Google Doodles!
+0340:  #GoogleDoodle" property="og:description"><meta content="summary
+0380: _large_image" property="twitter:card"><meta content="@GoogleDood
+03c0: les" property="twitter:site"><meta content="https://www.google.c
+0400: om/logos/doodles/2020/stay-and-play-at-home-with-popular-past-go
+0440: ogle-doodles-pac-man-2010-6753651837108775.2-2xa.gif" property="
+0480: twitter:image"><meta content="https://www.google.com/logos/doodl
+04c0: es/2020/stay-and-play-at-home-with-popular-past-google-doodles-p
+0500: ac-man-2010-6753651837108775.2-2xa.gif" property="og:image"><met
+0540: a content="1100" property="og:image:width"><
+<= Recv data, 1397 bytes (0x575)
+0000: meta content="440" property="og:image:height"><meta content="htt
+0040: ps://www.google.com/logos/doodles/2020/stay-and-play-at-home-wit
+0080: h-popular-past-google-doodles-pac-man-2010-6753651837108775.2-2x
+00c0: a.gif" property="og:url"><meta content="video.other" property="o
+0100: g:type"><title>Google</title><script nonce="H7+F3nAjjOjWSFy6WmCw
+0140: 8A==">(function(){window.google={kEI:'koy1XqfbEsu7ggeBib2QCg',kE
+0180: XPI:'0,202123,3,4,1151616,5663,730,224,3656,1449,206,3204,10,290
+01c0: ,761,175,364,1499,576,241,309,74,246,5,960,394,196,177,350,90,12
+0200: 0,104,113,544,97,1120,407,563,13,125,1123747,1197731,418,78,3290
+0240: 40,1294,12383,4855,32691,15248,867,28684,9188,8384,4859,1361,929
+0280: 0,3029,4739,3120,7913,1808,4020,978,4788,1,3142,5295,2056,920,87
+02c0: 3,1217,9405,1142,6290,1160,2714,3222,4516,2778,520,399,2277,8,85
+0300: ,4304,1279,2212,530,149,1103,327,513,517,1466,56,157,4101,109,20
+0340: 3,1135,1,3,2669,1839,184,1777,143,377,1947,1030,1,1198,93,328,12
+0380: 84,16,2927,2246,474,1339,29,719,1039,2273,1,953,773,1217,855,7,4
+03c0: 773,1295,8078,2663,641,1408,1042,2458,1226,1462,3934,1275,108,34
+0400: 07,908,2,1473,2082,2393,4,12,5407,225,996,1670,1086,250,2,665,43
+0440: 2,3,12,1534,865,1,372,1639,1908,705,148,189,3312,503,1,300,424,2
+0480: 33,1029,27,130,1,2093,1992,463,116,27,1344,47,114,979,651,4,498,
+04c0: 838,192,17,351,193,72,3,2,1,2,2,298,1363,459,567,210,271,598,276
+0500: ,110,285,2,8,12,29,746,472,205,10,386,438,530,4,844,279,185,5,14
+0540: 1,40,462,283,56,117,17,783,127,4,19,615,190,234,22,12
+<= Recv data, 1397 bytes (0x575)
+0000: 6,131,205,585,117,812,165,43,834,6,424,36,212,138,361,641,716,11
+0040: 95,272,45,112,359,228,170,82,278,66,393,221,249,14,148,605,25,35
+0080: ,25,40,3,132,84,68,237,83,6,246,985,241,106,182,191,280,461,5817
+00c0: 011,3310,1802584,6996022,549,333,444,1,2,80,1,900,896,1,8,1,2,25
+0100: 51,1,748,141,59,736,563,1,4265,1,1,1,1,137,1,1193,1401,3,529,2,2
+0140: ,3,5,4,3,1,4,6,4,44,7,4,75,7,8,1,1,14,5,14,3,3,2,11,5,5,9,5,4,1,
+0180: 2,1,1,2,3,1,1,2,1,16,1,3,3,9,1,1,6,23962154',kBL:'HOzm'};google.
+01c0: sn='webhp';google.kHL='en';})();(function(){google.lc=[];google.
+0200: li=0;google.getEI=function(a){for(var c;a&&(!a.getAttribute||!(c
+0240: =a.getAttribute("eid")));)a=a.parentNode;return c||google.kEI};g
+0280: oogle.getLEI=function(a){for(var c=null;a&&(!a.getAttribute||!(c
+02c0: =a.getAttribute("leid")));)a=a.parentNode;return c};google.ml=fu
+0300: nction(){return null};google.time=function(){return Date.now()};
+0340: google.log=function(a,c,b,d,g){if(b=google.logUrl(a,c,b,d,g)){a=
+0380: new Image;var e=google.lc,f=google.li;e[f]=a;a.onerror=a.onload=
+03c0: a.onabort=function(){delete e[f]};google.vel&&google.vel.lu&&goo
+0400: gle.vel.lu(b);a.src=b;google.li=f+1}};google.logUrl=function(a,c
+0440: ,b,d,g){var e="",f=google.ls||"";b||-1!=c.search("&ei=")||(e="&e
+0480: i="+google.getEI(d),-1==c.search("&lei=")&&(d=google.getLEI(d))&
+04c0: &(e+="&lei="+d));d="";!b&&google.cshid&&-1==c.search("&cshid=")&
+0500: &"slh"!=a&&(d="&cshid="+google.cshid);b=b||"/"+(g||"gen_204")+"?
+0540: atyp=i&ct="+a+"&cad="+c+e+f+"&zx="+google.time()+d;/^
+<= Recv data, 1397 bytes (0x575)
+0000: http:/i.test(b)&&"https:"==window.location.protocol&&(google.ml(
+0040: Error("a"),!1,{src:b,glmm:1}),b="");return b};}).call(this);(fun
+0080: ction(){google.y={};google.x=function(a,b){if(a)var c=a.id;else{
+00c0: do c=Math.random();while(google.y[c])}google.y[c]=[a,b];return!1
+0100: };google.lm=[];google.plm=function(a){google.lm.push.apply(googl
+0140: e.lm,a)};google.lq=[];google.load=function(a,b,c){google.lq.push
+0180: ([[a],b,c])};google.loadAll=function(a,b){google.lq.push([a,b])}
+01c0: ;}).call(this);google.f={};(function(){.document.documentElement
+0200: .addEventListener("submit",function(b){var a;if(a=b.target){var 
+0240: c=a.getAttribute("data-submitfalse");a="1"==c||"q"==c&&!a.elemen
+0280: ts.q.value?!0:!1}else a=!1;a&&(b.preventDefault(),b.stopPropagat
+02c0: ion())},!0);document.documentElement.addEventListener("click",fu
+0300: nction(b){var a;a:{for(a=b.target;a&&a!=document.documentElement
+0340: ;a=a.parentElement)if("A"==a.tagName){a="1"==a.getAttribute("dat
+0380: a-nohref");break a}a=!1}a&&b.preventDefault()},!0);}).call(this)
+03c0: ;.var a=window.location,b=a.href.indexOf("#");if(0<=b){var c=a.h
+0400: ref.substring(b+1);/(^|&)q=/.test(c)&&-1==c.indexOf("#")&&a.repl
+0440: ace("/search?"+c.replace(/(^|&)fp=[^&]*/g,"")+"&cad=h")};</scrip
+0480: t><style>#gbar,#guser{font-size:13px;padding-top:1px !important;
+04c0: }#gbar{height:22px}#guser{padding-bottom:7px !important;text-ali
+0500: gn:right}.gbh,.gbd{border-top:1px solid #c9d7f1;font-size:1px}.g
+0540: bh{height:0;position:absolute;top:24px;width:100%}@me
+<= Recv data, 1397 bytes (0x575)
+0000: dia all{.gb1{height:22px;margin-right:.5em;vertical-align:top}#g
+0040: bar{float:left}}a.gb1,a.gb4{text-decoration:underline !important
+0080: }a.gb1,a.gb4{color:#00c !important}.gbi .gb4{color:#dd8e27 !impo
+00c0: rtant}.gbf .gb4{color:#900 !important}.</style><style>body,td,a,
+0100: p,.h{font-family:arial,sans-serif}body{margin:0;overflow-y:scrol
+0140: l}#gog{padding:3px 8px 0}td{line-height:.8em}.gac_m td{line-heig
+0180: ht:17px}form{margin-bottom:20px}.h{color:#36c}.q{color:#00c}.ts 
+01c0: td{padding:0}.ts{border-collapse:collapse}em{font-weight:bold;fo
+0200: nt-style:normal}.lst{height:25px;width:496px}.gsfi,.lst{font:18p
+0240: x arial,sans-serif}.gsfs{font:17px arial,sans-serif}.ds{display:
+0280: inline-box;display:inline-block;margin:3px 0 4px;margin-left:4px
+02c0: }input{font-family:inherit}body{background:#fff;color:#000}a{col
+0300: or:#11c;text-decoration:none}a:hover,a:active{text-decoration:un
+0340: derline}.fl a{color:#36c}a:visited{color:#551a8b}.sblc{padding-t
+0380: op:5px}.sblc a{display:block;margin:2px 0;margin-left:13px;font-
+03c0: size:11px}.lsbb{background:#eee;border:solid 1px;border-color:#c
+0400: cc #999 #999 #ccc;height:30px}.lsbb{display:block}.ftl,#fll a{di
+0440: splay:inline-block;margin:0 12px}.lsb{background:url(/images/nav
+0480: _logo229.png) 0 -261px repeat-x;border:none;color:#000;cursor:po
+04c0: inter;height:30px;margin:0;outline:0;font:15px arial,sans-serif;
+0500: vertical-align:top}.lsb:active{background:#ccc}.lst:focus{outlin
+0540: e:none}</style><script nonce="H7+F3nAjjOjWSFy6WmCw8A=
+<= Recv data, 1397 bytes (0x575)
+0000: ="></script></head><body bgcolor="#fff"><script nonce="H7+F3nAjj
+0040: OjWSFy6WmCw8A==">(function(){var src='/images/nav_logo229.png';v
+0080: ar iesg=false;document.body.onload = function(){window.n && wind
+00c0: ow.n();if (document.images){new Image().src=src;}.if (!iesg){doc
+0100: ument.f&&document.f.q.focus();document.gbqf&&document.gbqf.q.foc
+0140: us();}.}.})();</script><div id="mngb"> <div id=gbar><nobr><b cla
+0180: ss=gb1>Search</b> <a class=gb1 href="https://www.google.com/imgh
+01c0: p?hl=en&tab=wi">Images</a> <a class=gb1 href="https://maps.googl
+0200: e.com/maps?hl=en&tab=wl">Maps</a> <a class=gb1 href="https://pla
+0240: y.google.com/?hl=en&tab=w8">Play</a> <a class=gb1 href="https://
+0280: www.youtube.com/?gl=US&tab=w1">YouTube</a> <a class=gb1 href="ht
+02c0: tps://news.google.com/nwshp?hl=en&tab=wn">News</a> <a class=gb1 
+0300: href="https://mail.google.com/mail/?tab=wm">Gmail</a> <a class=g
+0340: b1 href="https://drive.google.com/?tab=wo">Drive</a> <a class=gb
+0380: 1 style="text-decoration:none" href="https://www.google.com/intl
+03c0: /en/about/products?tab=wh"><u>More</u> &raquo;</a></nobr></div><
+0400: div id=guser width=100%><nobr><span id=gbn class=gbi></span><spa
+0440: n id=gbf class=gbf></span><span id=gbe></span><a href="http://ww
+0480: w.google.com/history/optout?hl=en" class=gb4>Web History</a> | <
+04c0: a  href="/preferences?hl=en" class=gb4>Settings</a> | <a target=
+0500: _top id=gb_70 href="https://accounts.google.com/ServiceLogin?hl=
+0540: en&passive=true&continue=https://www.google.com/" cla
+<= Recv data, 1397 bytes (0x575)
+0000: ss=gb4>Sign in</a></nobr></div><div class=gbh style=left:0></div
+0040: ><div class=gbh style=right:0></div> </div><center><br clear="al
+0080: l" id="lgpd"><div id="lga"><a href="/search?ie=UTF-8&amp;q=popul
+00c0: ar+Google+Doodle+games&amp;oi=ddle&amp;ct=153499275&amp;hl=en&am
+0100: p;sa=X&amp;ved=0ahUKEwin7M3B26TpAhXLneAKHYFED6IQPQgD"><img alt="
+0140: Stay and Play at Home with Popular Past Google Doodles: PAC-MAN 
+0180: (2010)" border="0" height="220" src="/logos/doodles/2020/stay-an
+01c0: d-play-at-home-with-popular-past-google-doodles-pac-man-2010-675
+0200: 3651837108775.2-law.gif" title="Stay and Play at Home with Popul
+0240: ar Past Google Doodles: PAC-MAN (2010)" width="550" id="hplogo">
+0280: <br></a><br></div><form action="/search" name="f"><table cellpad
+02c0: ding="0" cellspacing="0"><tr valign="top"><td width="25%">&nbsp;
+0300: </td><td align="center" nowrap=""><input name="ie" value="ISO-88
+0340: 59-1" type="hidden"><input value="en" name="hl" type="hidden"><i
+0380: nput name="source" type="hidden" value="hp"><input name="biw" ty
+03c0: pe="hidden"><input name="bih" type="hidden"><div class="ds" styl
+0400: e="height:32px;margin:4px 0"><input class="lst" style="margin:0;
+0440: padding:5px 8px 0 6px;vertical-align:top;color:#000" autocomplet
+0480: e="off" value="" title="Google Search" maxlength="2048" name="q"
+04c0:  size="57"></div><br style="line-height:0"><span class="ds"><spa
+0500: n class="lsbb"><input class="lsb" value="Google Search" name="bt
+0540: nG" type="submit"></span></span><span class="ds"><spa
+<= Recv data, 1397 bytes (0x575)
+0000: n class="lsbb"><input class="lsb" id="tsuid1" value="I'm Feeling
+0040:  Lucky" name="btnI" type="submit"><script nonce="H7+F3nAjjOjWSFy
+0080: 6WmCw8A==">(function(){var id='tsuid1';document.getElementById(i
+00c0: d).onclick = function(){if (this.form.q.value){this.checked = 1;
+0100: if (this.form.iflsig)this.form.iflsig.disabled = false;}.else to
+0140: p.location='/doodles/';};})();</script><input value="AINFCbYAAAA
+0180: AXrWaogk5RoPWQbOiTNGAAxQGi1Grpxlj" name="iflsig" type="hidden"><
+01c0: /span></span></td><td class="fl sblc" align="left" nowrap="" wid
+0200: th="25%"><a href="/advanced_search?hl=en&amp;authuser=0">Advance
+0240: d search</a></td></tr></table><input id="gbv" name="gbv" type="h
+0280: idden" value="1"><script nonce="H7+F3nAjjOjWSFy6WmCw8A==">(funct
+02c0: ion(){var a,b="1";if(document&&document.getElementById)if("undef
+0300: ined"!=typeof XMLHttpRequest)b="2";else if("undefined"!=typeof A
+0340: ctiveXObject){var c,d,e=["MSXML2.XMLHTTP.6.0","MSXML2.XMLHTTP.3.
+0380: 0","MSXML2.XMLHTTP","Microsoft.XMLHTTP"];for(c=0;d=e[c++];)try{n
+03c0: ew ActiveXObject(d),b="2"}catch(h){}}a=b;if("2"==a&&-1==location
+0400: .search.indexOf("&gbv=2")){var f=google.gbvu,g=document.getEleme
+0440: ntById("gbv");g&&(g.value=a);f&&window.setTimeout(function(){loc
+0480: ation.href=f},0)};}).call(this);</script></form><div id="gac_sco
+04c0: nt"></div><div style="font-size:83%;min-height:3.5em"><br><div i
+0500: d="prm"><style>.szppmdbYutt__middle-slot-promo{font-size:small;m
+0540: argin-bottom:32px}.szppmdbYutt__middle-slot-promo a.Z
+<= Recv data, 1397 bytes (0x575)
+0000: IeIlb{display:inline-block;text-decoration:none}.szppmdbYutt__mi
+0040: ddle-slot-promo img{border:none;margin-right:5px;vertical-align:
+0080: middle}</style><div class="szppmdbYutt__middle-slot-promo" data-
+00c0: ved="0ahUKEwin7M3B26TpAhXLneAKHYFED6IQnIcBCAQ"><a class="NKcBbd"
+0100:  href="https://www.google.com/url?q=https://www.youtube.com/stay
+0140: home%3Futm_source%3Dgoogle%26utm_medium%3Dhppromo%26utm_campaign
+0180: %3DHelpathomeYTUS&amp;source=hpp&amp;id=19017550&amp;ct=3&amp;us
+01c0: g=AFQjCNE2FZizHR5ncV3c9xnzo6f1UpGKmQ&amp;sa=X&amp;ved=0ahUKEwin7
+0200: M3B26TpAhXLneAKHYFED6IQ8IcBCAU" rel="nofollow">Make the most of 
+0240: your time at home with tips for recipes, workouts, and more</a><
+0280: /div></div></div><span id="footer"><div style="font-size:10pt"><
+02c0: div style="margin:19px auto;text-align:center" id="fll"><a href=
+0300: "/intl/en/ads/">Advertising.Programs</a><a href="/services/">Bus
+0340: iness Solutions</a><a href="/intl/en/about.html">About Google</a
+0380: ></div></div><p style="font-size:8pt;color:#767676">&copy; 2020 
+03c0: - <a href="/intl/en/policies/privacy/">Privacy</a> - <a href="/i
+0400: ntl/en/policies/terms/">Terms</a></p></span></center><script non
+0440: ce="H7+F3nAjjOjWSFy6WmCw8A==">(function(){window.google.cdo={hei
+0480: ght:0,width:0};(function(){var a=window.innerWidth,b=window.inne
+04c0: rHeight;if(!a||!b){var c=window.document,d="CSS1Compat"==c.compa
+0500: tMode?c.documentElement:c.body;a=d.clientWidth;b=d.clientHeight}
+0540: a&&b&&(a!=google.cdo.width||b!=google.cdo.height)&&go
+<= Recv data, 1397 bytes (0x575)
+0000: ogle.log("","","/client_204?&atyp=i&biw="+a+"&bih="+b+"&ei="+goo
+0040: gle.kEI);}).call(this);})();(function(){var u='/xjs/_/js/k\x3dxj
+0080: s.hp.en_US.CsCaZmZ7SBw.O/m\x3dsb_he,d/am\x3dAF8IbA4/d\x3d1/rs\x3
+00c0: dACT90oHzeBoHcXsNFZcfGZb59X-dH0insA';.setTimeout(function(){var 
+0100: b=document;var a="SCRIPT";"application/xhtml+xml"===b.contentTyp
+0140: e&&(a=a.toLowerCase());a=b.createElement(a);a.src=u;google.timer
+0180: s&&google.timers.load&&google.tick&&google.tick("load","xjsls");
+01c0: document.body.appendChild(a)},0);})();(function(){window.google.
+0200: xjsu='/xjs/_/js/k\x3dxjs.hp.en_US.CsCaZmZ7SBw.O/m\x3dsb_he,d/am\
+0240: x3dAF8IbA4/d\x3d1/rs\x3dACT90oHzeBoHcXsNFZcfGZb59X-dH0insA';})()
+0280: ;function _DumpException(e){throw e;}.function _F_installCss(c){
+02c0: }.(function(){google.jl={em:[],emw:false,lls:'default',pdt:0,sne
+0300: t:true,uwp:true};})();(function(){var pmc='{\x22d\x22:{},\x22sb_
+0340: he\x22:{\x22agen\x22:true,\x22cgen\x22:true,\x22client\x22:\x22h
+0380: eirloom-hp\x22,\x22dh\x22:true,\x22dhqt\x22:true,\x22ds\x22:\x22
+03c0: \x22,\x22ffql\x22:\x22en\x22,\x22fl\x22:true,\x22host\x22:\x22go
+0400: ogle.com\x22,\x22isbh\x22:28,\x22jsonp\x22:true,\x22msgs\x22:{\x
+0440: 22cibl\x22:\x22Clear Search\x22,\x22dym\x22:\x22Did you mean:\x2
+0480: 2,\x22lcky\x22:\x22I\\u0026#39;m Feeling Lucky\x22,\x22lml\x22:\
+04c0: x22Learn more\x22,\x22oskt\x22:\x22Input tools\x22,\x22psrc\x22:
+0500: \x22This search was removed from your \\u003Ca href\x3d\\\x22/hi
+0540: story\\\x22\\u003EWeb History\\u003C/a\\u003E\x22,\x2
+<= Recv data, 348 bytes (0x15c)
+0000: 2psrl\x22:\x22Remove\x22,\x22sbit\x22:\x22Search by image\x22,\x
+0040: 22srch\x22:\x22Google Search\x22},\x22ovr\x22:{},\x22pq\x22:\x22
+0080: \x22,\x22refpd\x22:true,\x22rfs\x22:[],\x22sbpl\x22:16,\x22sbpr\
+00c0: x22:16,\x22scd\x22:10,\x22stok\x22:\x22iSOy7LpSDqHYzXsL29r27vyVA
+0100: aI\x22,\x22uhde\x22:false}}';google.pmc=JSON.parse(pmc);})();</s
+0140: cript>        </body></html>
+== Info: Connection #0 to host www.google.com left intact

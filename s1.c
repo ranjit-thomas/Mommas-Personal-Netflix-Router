@@ -15,6 +15,37 @@
 
 #define BUFSIZE 1024
 
+/* 
+ * Structs exported from in.h
+ */
+
+/* Internet address */
+struct in_addr {
+  unsigned int s_addr; 
+};
+
+/* Internet style socket address */
+struct sockaddr_in  {
+  unsigned short int sin_family; /* Address family */
+  unsigned short int sin_port;   /* Port number */
+  struct in_addr sin_addr;	 /* IP address */
+  unsigned char sin_zero[...];   /* Pad to size of 'struct sockaddr' */
+};
+
+/*
+ * Struct exported from netdb.h
+ */
+
+/* Domain name service (DNS) host entry */
+struct hostent {
+  char    *h_name;        /* official name of host */
+  char    **h_aliases;    /* alias list */
+  int     h_addrtype;     /* host address type */
+  int     h_length;       /* length of address */
+  char    **h_addr_list;  /* list of addresses */
+}
+#endif
+
 /*
  * error - wrapper for perror
  */
@@ -122,11 +153,7 @@ int main(int argc, char **argv) {
     n = read(childfd, buf, BUFSIZE);
     if (n < 0) 
       error("ERROR reading from socket");
-    printf("whats good playa? we received %d bytes\n: %s", n, buf);
-
-    n = write(childfd, "sup big fella?", strlen("sup big fella?") + 2);
-    if (n < 0) 
-      error("ERROR writing to socket");
+    printf("server received %d bytes: %s", n, buf);
 
     close(childfd);
   }

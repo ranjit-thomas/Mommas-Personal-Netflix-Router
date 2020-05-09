@@ -10,52 +10,137 @@
 #include <string.h>
 
 #include "storageUnit.h"
-#include "serverData.h"
 #include "requestStruct.h"
+#include "connectSocket.h"
+#include "dataChunk.h"
 
 #define MAXREQUESTSIZE 2048
+#define MAXRESPONSESIZE 9999
+#define CONTENTLENGTHLINESIZE 500
 
-typedef struct connect_socket
+data_chunk** process_get_request(char http_request [], char hostname [], int portno) 
 {
-    int client;
-    int server;
-    struct connect_socket *next;
-} connect_socket;
+    int sockfd, total_nbytes, last_nbytes_received,
+            length_of_header, length_of_body_read;
+    struct sockaddr_in serv_addr;
+    struct hostent *server;
+    char http_response_body [MAXRESPONSESIZE];
+    char http_response_header [MAXRESPONSESIZE];
+    char http_response_header_copy [MAXRESPONSESIZE];
+    char *line_from_response;
+    data_chunk **head_of_list;
+    char content_length_line [CONTENTLENGTHLINESIZE];
 
-server_data* process_get_request(char http_request [], char get_request_line [], char hostname [], int portno);
+    printf("started this shit up\n");
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0)
+    {
+        fprintf(stderr,"ERROR, no such host\n");
+        exit(0);
+    }
 
-void add_to_connected_sockets(connect_socket** head_of_list, int client_socket, int server_socket)
-{
-    connect_socket** current_socket;
+    server = gethostbyname(hostname);
+    if (server == NULL) 
+    {
+        fprintf(stderr,"ERROR, no such host\n");
+        exit(0);
+    }
 
-    printf("Adding client socked %d and server socket %d\n", client_socket, server_socket);
-    current_socket = head_of_list;
-    while (*current_socket != NULL) *current_socket = (*current_socket)->next;
+    /* set up the server_addr so we can set up a "client-side" socket that
+       that can connect to the server we need to query */
+    bzero((char *) &serv_addr, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    bcopy((char *)server->h_addr, 
+         (char *)&serv_addr.sin_addr.s_addr,
+         server->h_length);
+    serv_addr.sin_port = htons(portno);
+    
+    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
+    {
+        fprintf(stderr,"ERROR, no such host\n");
+        exit(0);
+    }
 
-    *current_socket = malloc(sizeof(connect_socket));
-    (*current_socket)->client = client_socket;
-    (*current_socket)->server = server_socket;
-    (*current_socket)->next = NULL;
+    total_nbytes = write(sockfd, http_request, strlen(http_request));
+    if (total_nbytes < 0)
+    {
+        fprintf(stderr,"ERROR, no such host\n");
+        exit(0);
+    }
+
+
+    head_of_list = malloc(sizeof(data_chunk *));
+    *head_of_list = NULL;
+
+    // read from server untill we got the entire http_response_header
+    bzero(http_response_header, MAXRESPONSESIZE);
+    total_nbytes = 0;
+    last_nbytes_received = 1;
+
+    while (last_nbytes_received != -1 && strstr(http_response_header, "\r\n\r\n") == NULL)
+    {
+        last_nbytes_received = read(sockfd, http_response_header + total_nbytes, MAXREQUESTSIZE);
+        total_nbytes += last_nbytes_received;
+    }
+
+    if (last_nbytes_received == -1)
+    {
+        perror ("read");
+        exit (EXIT_FAILURE);
+    }
+
+    length_of_header = strstr(http_response_header, "\r\n\r\n") - http_response_header + 4;
+    length_of_body_read = total_nbytes - length_of_header;
+    bzero(http_response_body, MAXRESPONSESIZE);
+    memcpy(http_response_body, http_response_header + length_of_header, length_of_body_read);
+    bzero(http_response_header + length_of_header, length_of_body_read);
+    head_of_list = add_to_data_list(head_of_list, http_response_header, length_of_header);
+    head_of_list = add_to_data_list(head_of_list, http_response_body, length_of_body_read);
+
+    //parse the header to figure out the size of the data
+    bzero(http_response_header_copy, MAXRESPONSESIZE);
+    memcpy(http_response_header_copy, http_response_header, length_of_header);
+    line_from_response = strtok(http_response_header_copy, "\r\n");
+    strcpy(content_length_line, "");
+
+    while (line_from_response != NULL)
+    {
+        if (strstr(line_from_response, "Content-Length: ")) strcpy(content_length_line, line_from_response + 16);
+        line_from_response = strtok(NULL, "\r\n");
+    }
+
+
+
+    // read from server until there's nothing left to read
+    total_nbytes = atoi(content_length_line) - length_of_body_read;
+
+    last_nbytes_received = 1;
+    while (last_nbytes_received > 0 && total_nbytes) 
+    {
+        bzero(http_response_body, MAXRESPONSESIZE);
+        last_nbytes_received = read(sockfd, http_response_body, MAXRESPONSESIZE - 1);
+        total_nbytes -= last_nbytes_received;
+        if (last_nbytes_received > 0) head_of_list = add_to_data_list(head_of_list, http_response_body, last_nbytes_received);
+    }
+
+    // need to trigger an error if calling read caused an error on last call
+    if (last_nbytes_received < 0)
+    {
+        perror ("read");
+        exit (EXIT_FAILURE);
+    }
+
+    close(sockfd);
+    return head_of_list;
 }
 
-connect_socket* find_connect_socket(connect_socket* head_of_list, int node_socket)
-{
-    connect_socket* current_socket;
-
-    printf("Looking for nocde socket %d\n", node_socket);
-    current_socket = head_of_list;
-    while (current_socket != NULL && current_socket->client != node_socket && current_socket->server != node_socket) current_socket = current_socket->next;
-
-    if (current_socket == NULL) printf("Couldn't find anything\n");
-    return current_socket;
-}
-
-request_struct* read_from_client (int filedes)
+request_struct** read_from_client (int filedes)
 {
     char http_request[MAXREQUESTSIZE], http_request_copy[MAXREQUESTSIZE];
-    int total_nbytes, last_nbytes_received, portno_int;
+    int total_nbytes, last_nbytes_received, portno_int, length_of_header, last_nbytes_sent;
     char hostname_line[MAXREQUESTSIZE];
     char *line_from_request, *get_request_line, *portno_string, *hostname;
+    data_chunk **head_of_list, **old_head_of_list;
 
     // read until there's nothing left to read
     total_nbytes = 0;
@@ -73,8 +158,9 @@ request_struct* read_from_client (int filedes)
         exit (EXIT_FAILURE);
     }
 
-    /*printf("%d bytes were read\n", total_nbytes);
-    fflush(stdout);*/
+    // figure out how many bytes after the header have been read, and clear all that
+    length_of_header = strstr(http_request, "\r\n\r\n") - http_request + 4;
+    bzero(http_request + length_of_header, sizeof(http_request) - length_of_header);
 
     // n > 0 ==> data was read
     if (total_nbytes > 0)
@@ -101,75 +187,65 @@ request_struct* read_from_client (int filedes)
             line_from_request = strtok(NULL, "\r\n");
         }
 
+        // a nonvalid portnumber that will be set either explciitly by client, or in the GET/CONNECT if statements
+        portno_int = -999;
+
         // fourth step: get portnumber if specified
         if (strstr(hostname_line, ":"))
         {
             hostname = strtok(hostname_line, ":");
-            portno_string = strtok(NULL, "\0");
+            portno_string = strtok(NULL, "\r\n");
             portno_int = atoi(portno_string);
         }
 
         // fourth step (cont.): or else set to default
-        else
+        else hostname = strtok(hostname_line, "\r\n");
+
+        printf("request was %s\n", http_request_copy);
+
+        if (strstr(get_request_line, "GET")) 
         {
-            hostname = strtok(hostname_line, "\0");
-            portno_int = 80;
-        }
+            if (portno_int == -999) portno_int = 80;
 
-        /*printf("the get_request_line was %s \nthe hostname was %s\nthe portno is %d\n", 
-            get_request_line, hostname, portno_int);
-        fflush(stdout);*/
+            head_of_list = process_get_request(http_request_copy, hostname, portno_int);
 
-        if (strstr(get_request_line, "GET"))
-        {
-            server_data *data_to_return;
-            int bytes_to_write;
-
-            data_to_return = process_get_request(http_request_copy, get_request_line, hostname, portno_int);
-            bytes_to_write = data_to_return->total_bytes;
-
-            // write until there's nothing left to write
             total_nbytes = 0;
-            last_nbytes_received = 1;
-
-            while (last_nbytes_received != -1 && bytes_to_write > 0) 
+            last_nbytes_sent = 1;
+            while (last_nbytes_sent > 0 && *head_of_list != NULL)
             {
-                last_nbytes_received = write(filedes, data_to_return->data + total_nbytes, bytes_to_write);
-                total_nbytes += last_nbytes_received;
-                bytes_to_write -= last_nbytes_received;
+                old_head_of_list = remove_head_of_data_list(head_of_list);
+                last_nbytes_sent = write(filedes, (*old_head_of_list)->data_content, (*old_head_of_list)->data_size);
+                free(*old_head_of_list);
+                free(old_head_of_list);
             }
 
-            // need to trigger an error if calling write caused an error on last call
-            if (last_nbytes_received < 0)
+            if (last_nbytes_sent < 0)
             {
-                perror ("read");
+                perror ("write");
                 exit (EXIT_FAILURE);
             }
-
-            // free memory for storage_unit
-            free(data_to_return);
-            return NULL;
         }
 
         else if (strstr(get_request_line, "CONNECT"))
         {
-            request_struct *server_info;
+            if (portno_int == -999) portno_int = 443;
 
-            server_info = malloc(sizeof(request_struct));
-            strcpy(server_info->hostname, hostname);
-            server_info->portno = portno_int;
+            request_struct **server_info;
+
+            server_info = malloc(sizeof(request_struct *));
+            *server_info = malloc(sizeof(request_struct));
+            strcpy((*server_info)->hostname, hostname);
+            (*server_info)->portno = portno_int;
+
+            //while (*head_of_list != NULL) remove_head_of_data_list(head_of_list);
 
             return server_info;
         }
 
-        /* there is nothing in the "else" condition because we're only
-           looking for "GET" and "REQUEST" connects */
-
-
-
-        // MIGHT NEED TO CHANGE LATER: return 1 since we're done with this connection
-        return NULL;
+        else return NULL;
     }
+
+    return NULL;
 }
 
 int make_socket (uint16_t port)
@@ -207,8 +283,8 @@ int main (int argc, char **argv)
     int i;
     struct sockaddr_in clientname, servername;
     size_t size;
-    connect_socket* connected_sockets;
-    connect_socket* set_connect_socket;
+    connect_socket** connected_sockets;
+    connect_socket** set_connect_socket;
 
     // check that an argument for port number was supplied
     if (argc != 2) 
@@ -226,7 +302,8 @@ int main (int argc, char **argv)
     }
 
     // initialize an empty linkedList of connected sockets
-    connected_sockets = NULL;
+    connected_sockets = malloc(sizeof(connect_socket *));
+    *connected_sockets = NULL;
 
     /* Initialize the set of active sockets. */
     // all sockets are being set off since there should be no active sockets at begining...
@@ -240,17 +317,12 @@ int main (int argc, char **argv)
         // reset the fd_set to be off for all sockets (except the one proxy recieves on)
         read_fd_set = active_fd_set;
 
-        printf("before select call\n");
-        fflush(stdout);
         /* Block until input arrives on one or more active sockets. */
         if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0)
         {
           perror ("select");
           exit (EXIT_FAILURE);
         }
-
-        printf("after select call\n");
-        fflush(stdout);
 
         // iterate over all sockets in the "read_fd_set" list
         for (i = 0; i < FD_SETSIZE; ++i)
@@ -259,7 +331,7 @@ int main (int argc, char **argv)
             if (FD_ISSET (i, &read_fd_set))
             {
                 // figure out if this is from a node that is currently CONNECT-ed to another node
-                set_connect_socket = find_connect_socket(connected_sockets, i);
+                if (i != sock) set_connect_socket = find_connect_socket(connected_sockets, i);
 
                 /* if a connection request from a new client came to our "main" socket,
                    set that socket */ 
@@ -280,10 +352,10 @@ int main (int argc, char **argv)
                         exit (EXIT_FAILURE);
                     }
 
-                    fprintf (stderr,
+                    /*fprintf (stderr,
                              "Server: connect from host %s, port %hd.\n",
                              inet_ntoa (clientname.sin_addr),
-                             ntohs (clientname.sin_port));
+                             ntohs (clientname.sin_port));*/
 
                     // set the file descriptor to "on" in the 
                     FD_SET (new, &active_fd_set);
@@ -291,20 +363,74 @@ int main (int argc, char **argv)
                 }
 
                 // condition where the socket is currently CONNECT-ed to another
-                else if (set_connect_socket != NULL)
+                else if (*set_connect_socket != NULL)
                 {
-                    printf("yayyyyy\n");
+                    int sender, reciever, bytes_read, bytes_sent;
+                    char data_to_exchange[MAXRESPONSESIZE];
+                    char data_to_exchange_copy[MAXRESPONSESIZE];
+
+                    printf("gonna send some shit down a tunnell");
+
+                    if ((*set_connect_socket)->client == i)
+                    {
+                        sender = (*set_connect_socket)->client;
+                        reciever = (*set_connect_socket)->server;
+                    }
+
+                    else
+                    {
+                        sender = (*set_connect_socket)->server;
+                        reciever = (*set_connect_socket)->client;
+                    }                        
+
+                    printf(" from %d to %d\n", sender, reciever);
                     fflush(stdout);
+
+                    bzero(data_to_exchange, MAXRESPONSESIZE);
+                    bzero(data_to_exchange_copy, MAXRESPONSESIZE);
+
+                    // read from sender
+                    bytes_read = read(sender, data_to_exchange, MAXRESPONSESIZE);
+
+                    if (bytes_read < 0)
+                    {
+                        perror ("read");
+                        exit (EXIT_FAILURE);
+                    }
+
+                    printf("read %d bytes\n", bytes_read);
+                    fflush(stdout);
+                    if (bytes_read == 0)
+                    {
+                        close(sender);
+                        FD_CLR(sender, &active_fd_set);
+                        close(reciever);
+                        FD_CLR(reciever, &active_fd_set);
+
+                        printf("REMOVING %d and %d\n", sender, reciever);
+                        connected_sockets = remove_from_connected_sockets(connected_sockets, set_connect_socket);
+                        printf("list size decreased to %d\n", get_connect_list_length(connected_sockets));
+                    }
+                    else
+                    {
+                        memcpy(data_to_exchange_copy, data_to_exchange, bytes_read);
+                        // if there were any bytes read, send that to reciever
+                        bytes_sent = write(reciever, data_to_exchange_copy, bytes_read);
+
+                        if (bytes_sent < 0)
+                        {
+                            perror ("write");
+                            exit (EXIT_FAILURE);
+                        }
+                    }
                 }
 
                 /* if a file descriptor that doesnt represent "main" socket is set,
                    read whatever data was recieved */
                 else
                 {
-                    printf("should only see this once i think\n");
-                    fflush(stdout);
-
-                    request_struct *server_info;
+                    printf("gonna read some new request\n");
+                    request_struct **server_info;
 
                     server_info = read_from_client(i);
 
@@ -312,6 +438,7 @@ int main (int argc, char **argv)
                        value in the set of active sockets if we recieve 0 (i.e. done reading) */ 
                     if (server_info == NULL)
                     {
+                        printf("closing %d\n", i);
                         close (i);
                         FD_CLR (i, &active_fd_set);
                     }
@@ -320,8 +447,12 @@ int main (int argc, char **argv)
                        was recieved */
                     else
                     {
-                        int new_connect;
-                        struct hostent *server;
+                        int new_connect, bytes_sent;
+                        struct hostent **server;
+
+                        char success_response[] = "HTTP/1.1 400 OK\r\n\r\n";
+
+                        server = malloc(sizeof(struct hostent *));
 
                         new_connect = socket(AF_INET, SOCK_STREAM, 0);
                         if (new_connect < 0) 
@@ -330,21 +461,28 @@ int main (int argc, char **argv)
                             exit (EXIT_FAILURE);
                         }
 
-                        server = gethostbyname(server_info->hostname);
-                        if (server == NULL) 
+                        *server = gethostbyname((*server_info)->hostname);
+                        if (*server == NULL) 
                         {
                             fprintf(stderr,"ERROR, no such host\n");
                             exit(0);
                         }
 
+                        /*if (strcmp((*server_info)->hostname, "www.google.com") && strcmp((*server_info)->hostname, "www.bing.com"))
+                        {
+                            close (i);
+                            FD_CLR (i, &active_fd_set);
+                            continue;
+                        }*/
+
                         /* set up the server_addr so we can set up a "client-side" socket that
                            that can connect to the server we need to query */
                         bzero((char *) &servername, sizeof(servername));
                         servername.sin_family = AF_INET;
-                        bcopy((char *)server->h_addr, 
+                        bcopy((char *)(*server)->h_addr, 
                              (char *)&servername.sin_addr.s_addr,
-                             server->h_length);
-                        servername.sin_port = htons(server_info->portno);
+                             (*server)->h_length);
+                        servername.sin_port = htons((*server_info)->portno);
 
                         if (connect(new_connect,(struct sockaddr *) &servername,sizeof(servername)) < 0) 
                         {
@@ -352,15 +490,25 @@ int main (int argc, char **argv)
                             exit(0);
                         }
 
+                        // free memory
+                        free(server_info);
+                        free(server);
+
                         // set the file descriptor to "on" in the 
                         FD_SET (new_connect, &active_fd_set);
 
-                        // add both the client and server socket to the linkedList that has all Connect sockets
-                        add_to_connected_sockets(&connected_sockets, i, new_connect);
-                        if (connected_sockets == NULL) printf("we never added anything!!!\n");
+                        // send success status code
+                        bytes_sent = write(i, success_response, sizeof(success_response));
+                        if (bytes_sent < 0)
+                        {
+                            perror ("write");
+                            exit (EXIT_FAILURE);
+                        }
 
-                        printf("Should have added to the linked list here\n");
-                        fflush(stdout);
+                        printf("Before adding to sockets\n");
+                        connected_sockets = add_to_connected_sockets(connected_sockets, i, new_connect);
+                        printf("list size incrased to %d\n", get_connect_list_length(connected_sockets));
+                        printf("After adding to sockets\n");
                     }
                 }
             }

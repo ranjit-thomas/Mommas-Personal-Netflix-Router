@@ -1,7 +1,7 @@
 #ifndef SERVERDATA_H
 #define SERVERDATA_H
 
-#define MAXRESPONSESIZE 999999
+#define MAXRESPONSESIZE 9999
 
 typedef struct server_data
 {

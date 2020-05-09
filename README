@@ -1,0 +1,3 @@
+Command to compile: make proxy
+
+Command to run: ./proxy <portno>
