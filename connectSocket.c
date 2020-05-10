@@ -7,8 +7,6 @@ connect_socket** add_to_connected_sockets(connect_socket **head_of_list, int cli
 {
 	if (*head_of_list == NULL)
 	{
-        printf("Added client socket %d and server socket %d\n", client_socket, server_socket);
-        fflush(stdout);
 		*head_of_list = malloc(sizeof(connect_socket));
 		(*head_of_list)->client = client_socket;
 	    (*head_of_list)->server = server_socket;
